@@ -1,0 +1,20 @@
+[package]
+name = "pbjbi-automl"
+version.workspace = true
+authors.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[dependencies]
+pbjbi-core = { path = "../core" }
+pbjbi-symbolic = { path = "../symbolic" }
+
+# Core
+serde.workspace = true
+thiserror.workspace = true
+anyhow.workspace = true
+tracing.workspace = true
+
+[dev-dependencies]
+proptest.workspace = true

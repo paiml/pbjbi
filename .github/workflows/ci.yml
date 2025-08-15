@@ -1,0 +1,133 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+env:
+  RUST_BACKTRACE: 1
+  RUSTFLAGS: "-D warnings"
+  CARGO_TERM_COLOR: always
+
+jobs:
+  quality-gate:
+    name: Quality Gate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+      
+      - name: Setup Rust cache
+        uses: Swatinem/rust-cache@v2
+        with:
+          cache-on-failure: true
+      
+      - name: Format Check
+        run: cargo fmt --all -- --check
+      
+      - name: Clippy Check
+        run: cargo clippy --all-targets --all-features -- -D warnings
+      
+      - name: Build
+        run: cargo build --all-features
+      
+      - name: Test
+        run: cargo test --all-features
+      
+      - name: Doc Test
+        run: cargo test --doc --all-features
+
+  determinism-test:
+    name: Determinism Verification
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+      
+      - name: Setup Rust cache
+        uses: Swatinem/rust-cache@v2
+      
+      - name: Run Determinism Tests
+        run: |
+          cargo test --package pbjbi-core deterministic
+          cargo test --package pbjbi-core checksum
+        
+  statistical-correctness:
+    name: Statistical Correctness
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+      
+      - name: Setup Rust cache
+        uses: Swatinem/rust-cache@v2
+      
+      - name: Run Statistical Tests
+        run: |
+          cargo test --package pbjbi-core statistics
+          cargo test --package pbjbi-core probability
+          cargo test --package pbjbi-core quality
+
+  coverage:
+    name: Code Coverage
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+      
+      - name: Setup Rust cache
+        uses: Swatinem/rust-cache@v2
+      
+      - name: Install cargo-llvm-cov
+        uses: taiki-e/install-action@cargo-llvm-cov
+      
+      - name: Generate Coverage
+        run: cargo llvm-cov --all-features --workspace --lcov --output-path lcov.info
+      
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          files: ./lcov.info
+          fail_ci_if_error: false
+
+  security-audit:
+    name: Security Audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+      
+      - name: Install cargo-audit
+        uses: taiki-e/install-action@cargo-audit
+      
+      - name: Security Audit
+        run: cargo audit
+
+  benchmarks:
+    name: Performance Benchmarks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+      
+      - name: Setup Rust cache
+        uses: Swatinem/rust-cache@v2
+      
+      - name: Run Benchmarks
+        run: cargo bench --no-run --all-features

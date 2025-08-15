@@ -1,0 +1,38 @@
+[package]
+name = "pbjbi-core"
+version.workspace = true
+authors.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[dependencies]
+# Core
+serde.workspace = true
+serde_json.workspace = true
+thiserror.workspace = true
+anyhow.workspace = true
+tracing.workspace = true
+
+# Math & Statistics
+ndarray.workspace = true
+nalgebra.workspace = true
+statrs.workspace = true
+rand.workspace = true
+rand_chacha.workspace = true
+
+# Utilities
+sha2 = "0.10"
+hex = "0.4"
+chrono = { version = "0.4", features = ["serde"] }
+
+[dev-dependencies]
+proptest.workspace = true
+quickcheck.workspace = true
+criterion.workspace = true
+pretty_assertions.workspace = true
+
+
+[features]
+default = []
+simd = []

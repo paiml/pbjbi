@@ -1,0 +1,25 @@
+[package]
+name = "pbjbi-symbolic"
+version.workspace = true
+authors.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[dependencies]
+pbjbi-core = { path = "../core" }
+
+# Core
+serde.workspace = true
+serde_json.workspace = true
+thiserror.workspace = true
+anyhow.workspace = true
+tracing.workspace = true
+
+# Math
+rand.workspace = true
+rand_chacha.workspace = true
+
+[dev-dependencies]
+proptest.workspace = true
+criterion.workspace = true

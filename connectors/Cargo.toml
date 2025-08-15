@@ -1,0 +1,25 @@
+[package]
+name = "pbjbi-connectors"
+version.workspace = true
+authors.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[dependencies]
+pbjbi-core = { path = "../core" }
+
+# Core
+serde.workspace = true
+thiserror.workspace = true
+anyhow.workspace = true
+tracing.workspace = true
+tokio.workspace = true
+
+# Data formats
+polars.workspace = true
+arrow.workspace = true
+parquet.workspace = true
+
+[dev-dependencies]
+proptest.workspace = true
